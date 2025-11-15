@@ -690,7 +690,11 @@ class LLMNode(Node):
         context_value_variable = self.graph_runtime_state.variable_pool.get(node_data.context.variable_selector)
         if context_value_variable:
             if isinstance(context_value_variable, StringSegment):
-                yield RunRetrieverResourceEvent(retriever_resources=[], context=context_value_variable.value, context_files=[])
+                yield RunRetrieverResourceEvent(
+                    retriever_resources=[],
+                    context=context_value_variable.value, 
+                    context_files=[]
+                    )
             elif isinstance(context_value_variable, ArraySegment):
                 context_str = ""
                 original_retriever_resource: list[RetrievalSourceMetadata] = []
@@ -732,7 +736,9 @@ class LLMNode(Node):
                                 )
                                     context_files.append(attchment_info)
                 yield RunRetrieverResourceEvent(
-                    retriever_resources=original_retriever_resource, context=context_str.strip(), context_files=context_files
+                    retriever_resources=original_retriever_resource,
+                    context=context_str.strip(), 
+                    context_files=context_files
                 )
 
     def _convert_to_original_retriever_resource(self, context_dict: dict) -> RetrievalSourceMetadata | None:

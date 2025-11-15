@@ -2640,7 +2640,7 @@ class SegmentService:
         if "content" not in args or not args["content"] or not args["content"].strip():
             raise ValueError("Content is empty")
 
-        if "attachment_ids" in args and args["attachment_ids"]:
+        if args.get("attachment_ids"):
             if not isinstance(args["attachment_ids"], list):
                 raise ValueError("Attachment IDs is invalid")
             single_chunk_attachment_limit = dify_config.SINGLE_CHUNK_ATTACHMENT_LIMIT

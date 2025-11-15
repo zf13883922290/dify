@@ -18,6 +18,7 @@ import RunAndHistory from './run-and-history'
 import EditingTitle from './editing-title'
 import EnvButton from './env-button'
 import VersionHistoryButton from './version-history-button'
+import OnlineUsers from './online-users'
 import { useInputFieldPanel } from '@/app/components/rag-pipeline/hooks'
 import ScrollToSelectedNodeButton from './scroll-to-selected-node-button'
 import GlobalVariableButton from './global-variable-button'
@@ -72,6 +73,7 @@ const HeaderInNormal = ({
         <ScrollToSelectedNodeButton />
       </div>
       <div className='flex items-center gap-2'>
+        <OnlineUsers />
         {components?.left}
         <Divider type='vertical' className='mx-auto h-3.5' />
         <RunAndHistory {...runAndHistoryProps} />
