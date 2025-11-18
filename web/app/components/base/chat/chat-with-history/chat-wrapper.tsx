@@ -12,6 +12,7 @@ import { InputVarType } from '@/app/components/workflow/types'
 import { TransferMethod } from '@/types/app'
 import InputsForm from '@/app/components/base/chat/chat-with-history/inputs-form'
 import {
+  AppSourceType,
   fetchSuggestedQuestions,
   getUrl,
   stopChatMessageResponding,
@@ -52,6 +53,11 @@ const ChatWrapper = () => {
     initUserVariables,
   } = useChatWithHistoryContext()
 
+  const appSourceType = isInstalledApp ? AppSourceType.installedApp : AppSourceType.webApp
+
+  // Semantic variable for better code readability
+  const isHistoryConversation = !!currentConversationId
+
   const appConfig = useMemo(() => {
     const config = appParams || {}
 
@@ -79,7 +85,7 @@ const ChatWrapper = () => {
       inputsForm: inputsForms,
     },
     appPrevChatTree,
-    taskId => stopChatMessageResponding('', taskId, isInstalledApp, appId),
+    taskId => stopChatMessageResponding('', taskId, appSourceType, appId),
     clearChatList,
     setClearChatList,
   )
@@ -138,11 +144,11 @@ const ChatWrapper = () => {
     }
 
     handleSend(
-      getUrl('chat-messages', isInstalledApp, appId || ''),
+      getUrl('chat-messages', appSourceType, appId || ''),
       data,
       {
-        onGetSuggestedQuestions: responseItemId => fetchSuggestedQuestions(responseItemId, isInstalledApp, appId),
-        onConversationComplete: currentConversationId ? undefined : handleNewConversationCompleted,
+        onGetSuggestedQuestions: responseItemId => fetchSuggestedQuestions(responseItemId, appSourceType, appId),
+        onConversationComplete: isHistoryConversation ? undefined : handleNewConversationCompleted,
         isPublicAPI: !isInstalledApp,
       },
     )
@@ -178,13 +184,13 @@ const ChatWrapper = () => {
     else {
       return <InputsForm collapsed={collapsed} setCollapsed={setCollapsed} />
     }
-  },
-  [
+  }, [
     inputsForms.length,
     isMobile,
     currentConversationId,
     collapsed, allInputsHidden,
-  ])
+  ],
+  )
 
   const welcome = useMemo(() => {
     const welcomeMessage = chatList.find(item => item.isOpeningStatement)
@@ -231,8 +237,7 @@ const ChatWrapper = () => {
         </div>
       </div>
     )
-  },
-  [
+  }, [
     appData?.site.icon,
     appData?.site.icon_background,
     appData?.site.icon_type,

@@ -20,6 +20,8 @@ import DifyLogo from '@/app/components/base/logo/dify-logo'
 import cn from '@/utils/classnames'
 import useDocumentTitle from '@/hooks/use-document-title'
 import { useGlobalPublicStore } from '@/context/global-public-context'
+import { AppSourceType } from '@/service/share'
+import type { AppData } from '@/models/share'
 
 const Chatbot = () => {
   const {
@@ -131,10 +133,11 @@ const EmbeddedChatbotWrapper = () => {
     setCurrentConversationInputs,
     allInputsHidden,
     initUserVariables,
-  } = useEmbeddedChatbot()
+  } = useEmbeddedChatbot(AppSourceType.webApp)
 
   return <EmbeddedChatbotContext.Provider value={{
-    appData,
+    appSourceType: AppSourceType.webApp,
+    appData: appData as AppData,
     appParams,
     appMeta,
     appChatListDataLoading,

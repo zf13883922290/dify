@@ -16,6 +16,7 @@ import { useProviderContext } from '@/context/provider-context'
 import { useFeatures } from '@/app/components/base/features/hooks'
 import { cloneDeep, noop } from 'lodash-es'
 import { DEFAULT_CHAT_PROMPT_CONFIG, DEFAULT_COMPLETION_PROMPT_CONFIG } from '@/config'
+import { AppSourceType } from '@/service/share'
 
 type TextGenerationItemProps = {
   modelAndParameter: ModelAndParameter
@@ -129,11 +130,11 @@ const TextGenerationItem: FC<TextGenerationItemProps> = ({
 
   return (
     <TextGeneration
+      appSourceType={AppSourceType.webApp}
       className='flex h-full flex-col overflow-y-auto border-none'
       content={completion}
       isLoading={!completion && isResponding}
       isResponding={isResponding}
-      isInstalledApp={false}
       siteInfo={null}
       messageId={messageId}
       isError={false}

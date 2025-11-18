@@ -672,6 +672,7 @@ const translation = {
       hitScore: 'Retrieval Score:',
     },
     inputPlaceholder: 'Talk to {{botName}}',
+    inputDisabledPlaceholder: 'Preview Only',
     thinking: 'Thinking...',
     thought: 'Thought',
     resend: 'Resend',

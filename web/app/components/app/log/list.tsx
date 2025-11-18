@@ -43,6 +43,7 @@ import cn from '@/utils/classnames'
 import { noop } from 'lodash-es'
 import PromptLogModal from '../../base/prompt-log-modal'
 import { WorkflowContextProvider } from '@/app/components/workflow/context'
+import { AppSourceType } from '@/service/share'
 
 type AppStoreState = ReturnType<typeof useAppStore.getState>
 type ConversationListItem = ChatConversationGeneralDetail | CompletionConversationGeneralDetail
@@ -689,12 +690,12 @@ function DetailPanel({ detail, onFeedback }: IDetailPanel) {
               }}></div>
             </div>
             <TextGeneration
+              appSourceType={AppSourceType.webApp}
               className='mt-2'
               content={detail.message.answer}
               messageId={detail.message.id}
               isError={false}
               onRetry={noop}
-              isInstalledApp={false}
               supportFeedback
               feedback={detail.message.feedbacks.find((item: any) => item.from_source === 'admin')}
               onFeedback={feedback => onFeedback(detail.message.id, feedback)}

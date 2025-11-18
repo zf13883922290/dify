@@ -40,7 +40,7 @@ const PromptValuePanel: FC<IPromptValuePanelProps> = ({
   onVisionFilesChange,
 }) => {
   const { t } = useTranslation()
-  const { modelModeType, modelConfig, setInputs, mode, isAdvancedMode, completionPromptConfig, chatPromptConfig } = useContext(ConfigContext)
+  const { readonly, modelModeType, modelConfig, setInputs, mode, isAdvancedMode, completionPromptConfig, chatPromptConfig } = useContext(ConfigContext)
   const [userInputFieldCollapse, setUserInputFieldCollapse] = useState(false)
   const promptVariables = modelConfig.configs.prompt_variables.filter(({ key, name }) => {
     return key && key?.trim() && name && name?.trim()
@@ -60,12 +60,12 @@ const PromptValuePanel: FC<IPromptValuePanelProps> = ({
 
     if (isAdvancedMode) {
       if (modelModeType === ModelModeType.chat)
-        return chatPromptConfig.prompt.every(({ text }) => !text)
+        return chatPromptConfig?.prompt.every(({ text }) => !text)
       return !completionPromptConfig.prompt?.text
     }
 
     else { return !modelConfig.configs.prompt_template }
-  }, [chatPromptConfig.prompt, completionPromptConfig.prompt?.text, isAdvancedMode, mode, modelConfig.configs.prompt_template, modelModeType])
+  }, [chatPromptConfig?.prompt, completionPromptConfig.prompt?.text, isAdvancedMode, mode, modelConfig.configs.prompt_template, modelModeType])
 
   const handleInputValueChange = (key: string, value: string | boolean) => {
     if (!(key in promptVariableObj))
@@ -95,8 +95,8 @@ const PromptValuePanel: FC<IPromptValuePanelProps> = ({
         <div className={cn('px-4 pt-3', userInputFieldCollapse ? 'pb-3' : 'pb-1')}>
           <div className='flex cursor-pointer items-center gap-0.5 py-0.5' onClick={() => setUserInputFieldCollapse(!userInputFieldCollapse)}>
             <div className='system-md-semibold-uppercase text-text-secondary'>{t('appDebug.inputs.userInputField')}</div>
-            {userInputFieldCollapse && <RiArrowRightSLine className='h-4 w-4 text-text-secondary'/>}
-            {!userInputFieldCollapse && <RiArrowDownSLine className='h-4 w-4 text-text-secondary'/>}
+            {userInputFieldCollapse && <RiArrowRightSLine className='h-4 w-4 text-text-secondary' />}
+            {!userInputFieldCollapse && <RiArrowDownSLine className='h-4 w-4 text-text-secondary' />}
           </div>
           {!userInputFieldCollapse && (
             <div className='system-xs-regular mt-1 text-text-tertiary'>{t('appDebug.inputs.completionVarTip')}</div>
@@ -124,6 +124,7 @@ const PromptValuePanel: FC<IPromptValuePanelProps> = ({
                         placeholder={name}
                         autoFocus={index === 0}
                         maxLength={max_length || DEFAULT_VALUE_MAX_LEN}
+                        readOnly={readonly}
                       />
                     )}
                     {type === 'paragraph' && (
@@ -132,6 +133,7 @@ const PromptValuePanel: FC<IPromptValuePanelProps> = ({
                         placeholder={name}
                         value={inputs[key] ? `${inputs[key]}` : ''}
                         onChange={(e) => { handleInputValueChange(key, e.target.value) }}
+                        readOnly={readonly}
                       />
                     )}
                     {type === 'select' && (
@@ -142,6 +144,7 @@ const PromptValuePanel: FC<IPromptValuePanelProps> = ({
                         items={(options || []).map(i => ({ name: i, value: i }))}
                         allowSearch={false}
                         bgClassName='bg-gray-50'
+                        disabled={readonly}
                       />
                     )}
                     {type === 'number' && (
@@ -152,6 +155,7 @@ const PromptValuePanel: FC<IPromptValuePanelProps> = ({
                         placeholder={name}
                         autoFocus={index === 0}
                         maxLength={max_length || DEFAULT_VALUE_MAX_LEN}
+                        readOnly={readonly}
                       />
                     )}
                     {type === 'checkbox' && (
@@ -160,6 +164,7 @@ const PromptValuePanel: FC<IPromptValuePanelProps> = ({
                         value={!!inputs[key]}
                         required={required}
                         onChange={(value) => { handleInputValueChange(key, value) }}
+                        readonly={readonly}
                       />
                     )}
                   </div>
@@ -178,6 +183,7 @@ const PromptValuePanel: FC<IPromptValuePanelProps> = ({
                       url: fileItem.url,
                       upload_file_id: fileItem.fileId,
                     })))}
+                    disabled={readonly}
                   />
                 </div>
               </div>
@@ -186,12 +192,12 @@ const PromptValuePanel: FC<IPromptValuePanelProps> = ({
         )}
         {!userInputFieldCollapse && (
           <div className='flex justify-between border-t border-divider-subtle p-4 pt-3'>
-            <Button className='w-[72px]' onClick={onClear}>{t('common.operation.clear')}</Button>
+            <Button className='w-[72px]' disabled={readonly} onClick={onClear}>{t('common.operation.clear')}</Button>
             {canNotRun && (
               <Tooltip popupContent={t('appDebug.otherError.promptNoBeEmpty')}>
                 <Button
                   variant="primary"
-                  disabled={canNotRun}
+                  disabled={canNotRun || readonly}
                   onClick={() => onSend?.()}
                   className="w-[96px]">
                   <RiPlayLargeFill className="mr-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
@@ -202,7 +208,7 @@ const PromptValuePanel: FC<IPromptValuePanelProps> = ({
             {!canNotRun && (
               <Button
                 variant="primary"
-                disabled={canNotRun}
+                disabled={canNotRun || readonly}
                 onClick={() => onSend?.()}
                 className="w-[96px]">
                 <RiPlayLargeFill className="mr-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
@@ -216,7 +222,10 @@ const PromptValuePanel: FC<IPromptValuePanelProps> = ({
         <FeatureBar
           showFileUpload={false}
           isChatMode={appType !== AppModeEnum.COMPLETION}
-          onFeatureBarClick={setShowAppConfigureFeaturesModal} />
+          onFeatureBarClick={setShowAppConfigureFeaturesModal}
+          disabled={readonly}
+          hideEditEntrance={readonly}
+        />
       </div>
     </>
   )
