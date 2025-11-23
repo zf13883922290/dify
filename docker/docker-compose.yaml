@@ -739,6 +739,8 @@ services:
 
   # Frontend web application.
   web:
+    ports:
+      - "3000:3000"
     image: langgenius/dify-web:1.10.0
     restart: always
     environment:
